@@ -77,18 +77,18 @@ const RegisterForm = () => {
                 placeholder="Password Confirmation"
                 {...register("confirmPassword")}
               />
-              <button className="font-bold bg-black p-2 border-1 border-[#db504a] rounded-md cursor-pointer w-80">
+              <button className="font-bold bg-[#db504a] p-2 border-1 border-[#db504a] rounded-md cursor-pointer w-80">
                 Register
               </button>
             </form>
 
             <p className="font-black">Or</p>
 
-            <button className="flex justify-center items-center gap-2 font-medium bg-black p-2 border-1 border-[#db504a] rounded-md cursor-pointer w-80">
+            <button className="flex justify-center items-center gap-2 font-medium bg-[#db504a] p-2 border-1 border-[#db504a] rounded-md cursor-pointer w-80">
               <FaGoogle />
               Login with Google
             </button>
-            <button className="flex justify-center items-center gap-2 font-medium bg-black p-2 border-1 border-[#db504a] rounded-md cursor-pointer w-80">
+            <button className="flex justify-center items-center gap-2 font-medium bg-[#db504a] p-2 border-1 border-[#db504a] rounded-md cursor-pointer w-80">
               <FaFacebookSquare />
               Login with Facebook
             </button>
