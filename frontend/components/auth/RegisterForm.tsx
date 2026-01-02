@@ -1,28 +1,51 @@
 "use client";
 import Image from "next/image";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import { useState } from "react";
+
 import { SubmitHandler, useForm } from "react-hook-form";
 import { FaFacebookSquare, FaGoogle } from "react-icons/fa";
+import { registerSchema } from "@/lib/schema/register.schema";
 
-enum GenderEnum {
-  female = "female",
-  male = "male",
-  other = "other",
-}
-
-interface IFormInput {
-  firstName: string;
-  gender: GenderEnum;
-  lastName: string;
-  dob: string;
-  email: string;
-  phonenumber: string;
-  password: string;
-  confirmPassword: string;
-}
+// shadcn dependencies
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { Calendar } from "../ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { ChevronDownIcon } from "lucide-react";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 
 const RegisterForm = () => {
-  const { register, handleSubmit } = useForm<IFormInput>();
-  const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
+  type RegisterFormData = z.infer<typeof registerSchema>;
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+    mode: "onChange",
+  });
+
+  const onSubmit: SubmitHandler<RegisterFormData> = (data) => console.log(data);
+
+  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [open, setOpen] = useState(false);
+
+  console.log("errors: ", errors);
 
   return (
     <div className="flex justify-center items-center">
@@ -33,72 +56,138 @@ const RegisterForm = () => {
               className="flex flex-col gap-1 items-center text-white justify-center"
               onSubmit={handleSubmit(onSubmit)}
             >
-              <input
-                className="px-[10px] py-[8px] border-1 rounded-md border-[#db504a] bg-black text-white w-80"
-                placeholder="First name"
-                {...register("firstName")}
-              />
-              <input
-                className="px-[10px] py-[8px] border-1 rounded-md border-[#db504a] bg-black text-white w-80"
-                placeholder="Last name"
-                {...register("lastName")}
-              />
-              <input
-                className="px-[10px] py-[8px] border-1 rounded-md border-[#db504a] bg-black text-white w-80"
-                placeholder="Email"
-                {...register("email")}
-              />
-              <input
-                className="px-[10px] py-[8px] border-1 rounded-md border-[#db504a] bg-black text-white w-80"
-                placeholder="Phone number"
-                {...register("phonenumber")}
-              />
-              <input
-                className="px-[10px] py-[8px] border-1 rounded-md border-[#db504a] bg-black text-white w-80"
-                placeholder="DOB"
-                {...register("dob")}
-              />
-              <select
-                className="px-[10px] py-[8px] border-1 rounded-md border-[#db504a] bg-black text-white w-80"
-                {...register("gender")}
-              >
-                <option value="female">Gender</option>
-                <option value="female">female</option>
-                <option value="male">male</option>
-                <option value="other">other</option>
-              </select>
-              <input
-                className="px-[10px] py-[8px] border-1 rounded-md border-[#db504a] bg-black text-white w-80"
-                placeholder="Password"
-                {...register("password")}
-              />
-              <input
-                className="px-[10px] py-[8px] border-1 rounded-md border-[#db504a] bg-black text-white w-80"
-                placeholder="Password Confirmation"
-                {...register("confirmPassword")}
-              />
+              <Field className="gap-1 pb-2 pb-2">
+                <FieldLabel htmlFor="fullName">Full name</FieldLabel>
+                <Input
+                  id="fullName"
+                  autoComplete="off"
+                  placeholder="Jensen Ackles"
+                  {...register("fullName")}
+                />
+                <FieldError>{errors.fullName?.message}</FieldError>
+              </Field>
+
+              <Field className="gap-1 pb-2">
+                <FieldLabel htmlFor="email">Email</FieldLabel>
+                <Input
+                  id="email"
+                  autoComplete="off"
+                  placeholder="Jensen Ackles"
+                  {...register("email")}
+                />
+                <FieldError>{errors.email?.message}</FieldError>
+              </Field>
+
+              <Field className="gap-1 pb-2">
+                <FieldLabel htmlFor="phonenumber">Phone number</FieldLabel>
+                <Input
+                  id="phonenumber"
+                  autoComplete="off"
+                  placeholder="Jensen Ackles"
+                  {...register("phonenumber")}
+                />
+                <FieldError>{errors.phonenumber?.message}</FieldError>
+              </Field>
+
+              <Field className="gap-1 pb-2">
+                <FieldLabel htmlFor="phonenumber">Date of birth</FieldLabel>
+                <Popover open={open} onOpenChange={setOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      id="date"
+                      className="w-48 justify-between font-normal"
+                    >
+                      {date ? date.toLocaleDateString() : "Select date"}
+                      <ChevronDownIcon />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    className="w-auto overflow-hidden p-0"
+                    align="start"
+                  >
+                    <Calendar
+                      mode="single"
+                      selected={date}
+                      captionLayout="dropdown"
+                      onSelect={(date) => {
+                        setDate(date);
+                        setOpen(false);
+                      }}
+                    />
+                  </PopoverContent>
+                </Popover>
+                <FieldError>{errors.dob?.message}</FieldError>
+              </Field>
+
+              <Field className="gap-1 pb-2">
+                <FieldLabel htmlFor="phonenumber">
+                  Select your gender
+                </FieldLabel>
+                <Select>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Select your gender" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectGroup>
+                      <SelectItem value="male">Male</SelectItem>
+                      <SelectItem value="female">Female</SelectItem>
+                      <SelectItem value="others">Others</SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                <FieldError>{errors.gender?.message}</FieldError>
+              </Field>
+
+              <Field className="gap-1 pb-2">
+                <FieldLabel htmlFor="password">Password</FieldLabel>
+                <Input
+                  id="password"
+                  autoComplete="off"
+                  placeholder="@wer!**123"
+                  {...register("password")}
+                />
+                <FieldError>{errors.password?.message}</FieldError>
+              </Field>
+
+              <Field className="gap-1 pb-2">
+                <FieldLabel htmlFor="confirmPassword">
+                  Confirm Password
+                </FieldLabel>
+                <Input
+                  id="confirmPassword"
+                  autoComplete="off"
+                  placeholder="@wer!**123"
+                  {...register("confirmPassword")}
+                />
+                <FieldError>{errors.confirmPassword?.message}</FieldError>
+              </Field>
+
               <button className="font-bold bg-[#db504a] p-2 border-1 border-[#db504a] rounded-md cursor-pointer w-80">
                 Register
               </button>
             </form>
+          </div>
 
-            <p className="font-black">Or</p>
+          <div className="flex flex-col gap-2 items-center justify-center p-2">
+            <div className="h-60 w-[1px] bg-gray-600"></div>
+            <div className="font-black">Or</div>
+            <div className="h-60 w-[1px] bg-gray-600"></div>
+          </div>
 
-            <button className="flex justify-center items-center gap-2 font-medium bg-[#db504a] p-2 border-1 border-[#db504a] rounded-md cursor-pointer w-80">
+          <div className="flex flex-col gap-2 px-5">
+            <h1 className="pb-2 text-5xl font-black text-center">
+              Sports Buddy
+            </h1>
+            <Image src="/sport-mate.svg" alt="sport" width={394} height={100} />
+            <button className="flex justify-center items-center gap-2 font-medium bg-[#db504a] p-2 border-1 border-[#db504a] rounded-md cursor-pointer w-100">
               <FaGoogle />
               Login with Google
             </button>
-            <button className="flex justify-center items-center gap-2 font-medium bg-[#db504a] p-2 border-1 border-[#db504a] rounded-md cursor-pointer w-80">
+            <button className="flex justify-center items-center gap-2 font-medium bg-[#db504a] p-2 border-1 border-[#db504a] rounded-md cursor-pointer w-100">
               <FaFacebookSquare />
               Login with Facebook
             </button>
-          </div>
-
-          <div className="flex flex-col gap-10 px-5">
-            <h1 className="pb-6 text-5xl font-black text-center">
-              Sports Buddy
-            </h1>
-            <Image src="/sport-mate.svg" alt="sport" width={400} height={100} />
           </div>
         </div>
       </div>
