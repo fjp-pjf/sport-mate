@@ -72,7 +72,7 @@ const RegisterForm = () => {
                 <Input
                   id="email"
                   autoComplete="off"
-                  placeholder="Jensen Ackles"
+                  placeholder="Your@email.com"
                   {...register("email")}
                 />
                 <FieldError>{errors.email?.message}</FieldError>
@@ -83,14 +83,14 @@ const RegisterForm = () => {
                 <Input
                   id="phonenumber"
                   autoComplete="off"
-                  placeholder="Jensen Ackles"
+                  placeholder="123-(456)-7890"
                   {...register("phonenumber")}
                 />
                 <FieldError>{errors.phonenumber?.message}</FieldError>
               </Field>
 
               <Field className="gap-1 pb-2">
-                <FieldLabel htmlFor="phonenumber">Date of birth</FieldLabel>
+                <FieldLabel htmlFor="dob">Date of birth</FieldLabel>
                 <Popover open={open} onOpenChange={setOpen}>
                   <PopoverTrigger asChild>
                     <Button
@@ -121,7 +121,7 @@ const RegisterForm = () => {
               </Field>
 
               <Field className="gap-1 pb-2">
-                <FieldLabel htmlFor="phonenumber">
+                <FieldLabel htmlFor="gender">
                   Select your gender
                 </FieldLabel>
                 <Select>

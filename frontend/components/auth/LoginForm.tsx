@@ -1,14 +1,25 @@
 "use client";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
-interface IFormInput {
-  email: string;
-  password: string;
-}
+import { SubmitHandler, useForm } from "react-hook-form";
+
+// shadcn dependencies
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { loginSchema } from "@/lib/schema/login.schema";
 
 export default function LoginForm() {
-  const { register, handleSubmit } = useForm<IFormInput>();
-  const onSubmit: SubmitHandler<IFormInput> = (data) => console.log(data);
+  type LoginFormSchema = z.infer<typeof loginSchema>;
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginFormSchema>({
+    resolver: zodResolver(loginSchema),
+    mode: "onChange",
+  });
+  const onSubmit: SubmitHandler<LoginFormSchema> = (data) => console.log(data);
 
   return (
     <div className="flex justify-center items-center w-screen h-screen">
@@ -18,16 +29,27 @@ export default function LoginForm() {
           className="flex flex-col gap-2 items-center text-white justify-center"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <input
-            className="px-[10px] py-[8px] border-1 rounded-md border-[#db504a] bg-black text-white w-80"
-            placeholder="Email"
-            {...register("email")}
-          />
-          <input
-            className="px-[10px] py-[8px] border-1 rounded-md border-[#db504a] bg-black text-white w-80"
-            placeholder="Password"
-            {...register("password")}
-          />
+          <Field className="gap-1 pb-2">
+            <FieldLabel htmlFor="email">Email</FieldLabel>
+            <Input
+              id="email"
+              autoComplete="off"
+              placeholder="your@email.com"
+              {...register("email")}
+            />
+            <FieldError>{errors.email?.message}</FieldError>
+          </Field>
+
+          <Field className="gap-1 pb-2">
+            <FieldLabel htmlFor="password">Password</FieldLabel>
+            <Input
+              id="password"
+              autoComplete="off"
+              placeholder="@wer!**123"
+              {...register("password")}
+            />
+            <FieldError>{errors.password?.message}</FieldError>
+          </Field>
           <button className="bg-[#db504a] font-bold p-2 border-1 border-[#db504a] rounded-md cursor-pointer w-80">
             Login
           </button>
