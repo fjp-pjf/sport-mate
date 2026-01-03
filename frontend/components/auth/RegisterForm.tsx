@@ -34,6 +34,7 @@ const RegisterForm = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<RegisterFormData>({
     resolver: zodResolver(registerSchema),
@@ -42,7 +43,7 @@ const RegisterForm = () => {
 
   const onSubmit: SubmitHandler<RegisterFormData> = (data) => console.log(data);
 
-  const [date, setDate] = useState<Date | undefined>(new Date());
+  const [date, setDate] = useState<Date | undefined>();
   const [open, setOpen] = useState(false);
 
   console.log("errors: ", errors);
@@ -107,11 +108,18 @@ const RegisterForm = () => {
                     align="start"
                   >
                     <Calendar
+                      id="dob"
                       mode="single"
                       selected={date}
                       captionLayout="dropdown"
                       onSelect={(date) => {
+                        if (!date) return;
+
                         setDate(date);
+                        setValue("dob", date, {
+                          shouldValidate: true,
+                          shouldDirty: true,
+                        });
                         setOpen(false);
                       }}
                     />
@@ -121,10 +129,15 @@ const RegisterForm = () => {
               </Field>
 
               <Field className="gap-1 pb-2">
-                <FieldLabel htmlFor="gender">
-                  Select your gender
-                </FieldLabel>
-                <Select>
+                <FieldLabel htmlFor="gender">Select your gender</FieldLabel>
+                <Select
+                  onValueChange={(value) =>
+                    setValue("gender", value as "male" | "female" | "others", {
+                      shouldValidate: true,
+                      shouldDirty: true,
+                    })
+                  }
+                >
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Select your gender" />
                   </SelectTrigger>
@@ -136,6 +149,7 @@ const RegisterForm = () => {
                     </SelectGroup>
                   </SelectContent>
                 </Select>
+
                 <FieldError>{errors.gender?.message}</FieldError>
               </Field>
 
